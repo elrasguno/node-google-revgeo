@@ -1,0 +1,598 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "11th St/btw Market & Mission",
+               "short_name" : "11th St/btw Market & Mission",
+               "types" : [ "bus_station", "transit_station", "establishment" ]
+            },
+            {
+               "long_name" : "SoMa",
+               "short_name" : "SoMa",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94142",
+               "short_name" : "94142",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "11th St/btw Market & Mission, San Francisco, CA 94103, USA",
+         "geometry" : {
+            "location" : {
+               "lat" : 37.7751180,
+               "lng" : -122.4182550
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.77646698029150,
+                  "lng" : -122.4169060197085
+               },
+               "southwest" : {
+                  "lat" : 37.77376901970850,
+                  "lng" : -122.4196039802915
+               }
+            }
+         },
+         "types" : [ "bus_station", "transit_station", "establishment" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "2-98",
+               "short_name" : "2-98",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "11th St",
+               "short_name" : "11th St",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "SoMa",
+               "short_name" : "SoMa",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            },
+            {
+               "long_name" : "94103",
+               "short_name" : "94103",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "2-98 11th St, San Francisco, CA 94103, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.77556220,
+                  "lng" : -122.41711550
+               },
+               "southwest" : {
+                  "lat" : 37.77434130,
+                  "lng" : -122.41863350
+               }
+            },
+            "location" : {
+               "lat" : 37.77514390,
+               "lng" : -122.41811480
+            },
+            "location_type" : "RANGE_INTERPOLATED",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.77630073029150,
+                  "lng" : -122.4165255197085
+               },
+               "southwest" : {
+                  "lat" : 37.77360276970850,
+                  "lng" : -122.4192234802915
+               }
+            }
+         },
+         "types" : [ "street_address" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "94142",
+               "short_name" : "94142",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco, CA 94142, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.78844570,
+                  "lng" : -122.40141930
+               },
+               "southwest" : {
+                  "lat" : 37.7693870,
+                  "lng" : -122.4240740
+               }
+            },
+            "location" : {
+               "lat" : 37.780,
+               "lng" : -122.410
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.78844570,
+                  "lng" : -122.40141930
+               },
+               "southwest" : {
+                  "lat" : 37.7693870,
+                  "lng" : -122.4240740
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "SoMa",
+               "short_name" : "SoMa",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "SoMa, San Francisco, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.7875290,
+                  "lng" : -122.39640
+               },
+               "southwest" : {
+                  "lat" : 37.7689350,
+                  "lng" : -122.42284880
+               }
+            },
+            "location" : {
+               "lat" : 37.77779840,
+               "lng" : -122.40909370
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.7875290,
+                  "lng" : -122.39640
+               },
+               "southwest" : {
+                  "lat" : 37.7689350,
+                  "lng" : -122.42284880
+               }
+            }
+         },
+         "types" : [ "neighborhood", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "94103",
+               "short_name" : "94103",
+               "types" : [ "postal_code" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco, CA 94103, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.788050,
+                  "lng" : -122.3978120
+               },
+               "southwest" : {
+                  "lat" : 37.76356090,
+                  "lng" : -122.4286570
+               }
+            },
+            "location" : {
+               "lat" : 37.77264020,
+               "lng" : -122.40991540
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.788050,
+                  "lng" : -122.3978120
+               },
+               "southwest" : {
+                  "lat" : 37.76356090,
+                  "lng" : -122.4286570
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "Central East San Francisco",
+               "short_name" : "Central East San Francisco",
+               "types" : [ "neighborhood", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "Central East San Francisco, San Francisco, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.79570,
+                  "lng" : -122.37671590
+               },
+               "southwest" : {
+                  "lat" : 37.7311310,
+                  "lng" : -122.4363820
+               }
+            },
+            "location" : {
+               "lat" : 37.76159660,
+               "lng" : -122.40708340
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.79570,
+                  "lng" : -122.37671590
+               },
+               "southwest" : {
+                  "lat" : 37.7311310,
+                  "lng" : -122.4363820
+               }
+            }
+         },
+         "types" : [ "neighborhood", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.83233999999999,
+                  "lng" : -122.3570720
+               },
+               "southwest" : {
+                  "lat" : 37.70810880,
+                  "lng" : -122.5144190
+               }
+            },
+            "location" : {
+               "lat" : 37.75160750,
+               "lng" : -122.4240740
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.83233999999999,
+                  "lng" : -122.3570720
+               },
+               "southwest" : {
+                  "lat" : 37.70810880,
+                  "lng" : -122.5144190
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_2", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.92977070,
+                  "lng" : -122.32791480
+               },
+               "southwest" : {
+                  "lat" : 37.69333540,
+                  "lng" : -123.10777330
+               }
+            },
+            "location" : {
+               "lat" : 37.77490730,
+               "lng" : -122.41938780
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.92977070,
+                  "lng" : -122.32791480
+               },
+               "southwest" : {
+                  "lat" : 37.69333540,
+                  "lng" : -123.10777330
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_2", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "SF",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "San Francisco",
+               "short_name" : "San Francisco",
+               "types" : [ "administrative_area_level_2", "political" ]
+            },
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "San Francisco, CA, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 37.92977070,
+                  "lng" : -122.32791480
+               },
+               "southwest" : {
+                  "lat" : 37.69333540,
+                  "lng" : -123.10777330
+               }
+            },
+            "location" : {
+               "lat" : 37.77492950,
+               "lng" : -122.41941550
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 37.8120,
+                  "lng" : -122.34820
+               },
+               "southwest" : {
+                  "lat" : 37.70339999999999,
+                  "lng" : -122.5270
+               }
+            }
+         },
+         "types" : [ "locality", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "California",
+               "short_name" : "CA",
+               "types" : [ "administrative_area_level_1", "political" ]
+            },
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "California, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53420710,
+                  "lng" : -124.40961950
+               }
+            },
+            "location" : {
+               "lat" : 36.7782610,
+               "lng" : -119.41793240
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 42.00951690,
+                  "lng" : -114.1312110
+               },
+               "southwest" : {
+                  "lat" : 32.53420710,
+                  "lng" : -124.40961950
+               }
+            }
+         },
+         "types" : [ "administrative_area_level_1", "political" ]
+      },
+      {
+         "address_components" : [
+            {
+               "long_name" : "United States",
+               "short_name" : "US",
+               "types" : [ "country", "political" ]
+            }
+         ],
+         "formatted_address" : "United States",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 90.0,
+                  "lng" : 180.0
+               },
+               "southwest" : {
+                  "lat" : -90.0,
+                  "lng" : -180.0
+               }
+            },
+            "location" : {
+               "lat" : 37.090240,
+               "lng" : -95.7128910
+            },
+            "location_type" : "APPROXIMATE",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 49.380,
+                  "lng" : -66.940
+               },
+               "southwest" : {
+                  "lat" : 25.820,
+                  "lng" : -124.390
+               }
+            }
+         },
+         "types" : [ "country", "political" ]
+      }
+   ],
+   "status" : "OK"
+}
