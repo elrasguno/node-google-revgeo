@@ -1,5 +1,3 @@
-var fs = require('fs');
-
 var localityFinder = (function () {   
     var cacheObj = {};
     return {
@@ -77,11 +75,12 @@ var localityFinder = (function () {
     }
 })();
 
+var fs = require('fs');
+
 fs.readFile('./sf_data.json', 'utf8', function (err, data) {
     var parsed_data = JSON.parse(data),
         results     = parsed_data && parsed_data.results,
         results_len = results && results.length;
-    //console.log("got data!", results_len, results);
 
     var info = localityFinder.parseGoogleData(results);
 
@@ -92,7 +91,6 @@ fs.readFile('./rome_data.json', 'utf8', function (err, data) {
     var parsed_data = JSON.parse(data),
         results     = parsed_data && parsed_data.results,
         results_len = results && results.length;
-    //console.log("got data!", results_len, results);
 
     var info = localityFinder.parseGoogleData(results);
 
