@@ -23,7 +23,7 @@ var localityFinder = (function () {
         for (i = 0; i < len; i++) {
             if ( isBetweenCoords(lat, data[i].bounds.lat) 
                  && isBetweenCoords(lng, data[i].bounds.lng) ) {
-                console.log("You are in " + data[i].name);
+                //console.log("You are in " + data[i].name);
                 return data[i];
             }
         }
@@ -91,20 +91,34 @@ var localityFinder = (function () {
     /**
      * cacheData
      *
-     * Cache off data into this.cacheObj
+     * Cache off data into this.localityData
+     *
      * @access private
      */
     var cacheData = function(cacheInfo) {
-        var dataIdx  = Math.floor(cacheInfo.bounds.lat[0]),
+        var lat1     = Math.floor(cacheInfo.bounds.lat[0]),
+            lat2     = Math.floor(cacheInfo.bounds.lat[1]),
+            dataIdx  = (function() {
+                            var min = Math.min.apply(null, [lat1, lat2]),
+                                max = Math.max.apply(null, [lat1, lat2]),
+                                result = [], i;
+                            for (i = min; i <= max; i++) { result.push(i); }
+                            return result;
+                        })(),
             cacheObj = this.localityData,
             cachedData,
-            result;
+            result, i;
 
-        if (!cacheObj[dataIdx]) {
-            cacheObj[dataIdx] = [];
+        // Given that the floored values of the bounds of an area
+        // can be different, store data in a range from min to max.
+        for (i = 0; i < dataIdx.length; i++) {
+            if (!cacheObj[dataIdx[i]]) {
+                cacheObj[dataIdx[i]] = [];
+            }
+            cacheObj[dataIdx[i]].push(cacheInfo);    
         }
-        cacheObj[dataIdx].push(cacheInfo);
 
+        // TODO: prevent duplicates.
         // Read existing file
         //if (cachedData = fs.readFileSync('./revgeo_data.json', 'utf8')) {
         //    console.log('CACHED_DATA', cachedData);
@@ -118,7 +132,7 @@ var localityFinder = (function () {
             fd   = fs.openSync('./revgeo_data.json', 'w+');
 
         // Write back updated data
-        fd && fs.writeSync(fd, data, 0, len, null);
+        fd && fs.writeSync(fd, data, 0, len + 1, null);
         fs.closeSync(fd);
     };
 
@@ -207,7 +221,9 @@ fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
             var info = localityFinder.getLocalityDataFromGoogle([lat,lng], function(info) {
                 now = +new Date;
                 console.log("data from google (%dms)", (now - got_data_ts), info);
-                info && localityFinder.cacheData(info);
+                locality = localityFinder.getLocalityInfo([lat,lng]);
+                console.log('locality for %s', info.name, locality);
+                info && locality && localityFinder.cacheData(info);
             });
         }
     }
