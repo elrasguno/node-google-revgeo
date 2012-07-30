@@ -207,19 +207,26 @@ var localityFinder = (function () {
 
 })();
 
-var fs       = require('fs'),
-    http     = require('http'),
-    start_ts = +new Date;
+var redis    = require('redis')
+  , client   = redis.createClient()
+  , fs       = require('fs')
+  , http     = require('http')
+  , start_ts = +new Date;
+
+// Setup redis client
+client.on('error', function (err) {
+        console.log(err);
+});
+
+client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
 
 fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
     var got_data_ts = +new Date,
         got_data_in = (got_data_ts - start_ts),
-        parsed_data, results, results_len;
+        parsed_data;
 
     try {
         parsed_data = JSON.parse(data);
-        results     = parsed_data && parsed_data.results;
-        results_len = results && results.length;
     } catch (e) {
         console.log("bad data, bad");
         console.log(e);
@@ -246,6 +253,9 @@ fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
         if (locality) {
             now = +new Date;
             console.log("data from cache (%dms)", (now - got_data_ts), locality);
+
+            // Close redis connection
+            client.end();
         } else {
             var info     = localityFinder.getLocalityDataFromGoogle([lat,lng], function(info) {
                 now      = +new Date,
@@ -253,6 +263,9 @@ fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
                 console.log("data from google (%dms)", (now - got_data_ts), info.name);
                 // Validate that input data falls within info bounds
                 info && inBounds && localityFinder.cacheData(info);
+
+                // Close redis connection
+                client.end();
             });
         }
     }
