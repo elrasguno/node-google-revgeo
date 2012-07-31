@@ -2,7 +2,9 @@ var redis    = require('redis')
   , client   = redis.createClient()
   , fs       = require('fs')
   , http     = require('http')
-  , start_ts = +new Date;
+  , debug    = false
+  , start_ts = +new Date
+  , end_ts;
 
 // Setup redis client
 client.on('error', function (err) {
@@ -11,7 +13,7 @@ client.on('error', function (err) {
 });
 
 client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
-client.select(2);
+client.select(3);
 
 fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
     var got_data_ts = +new Date,
@@ -28,45 +30,57 @@ fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
         return;
     }
 
-    var idx, data, len, i;
+    var idx, data, len, i,
+        ops_begun = 0,
+        ops_done  = 0;
     for (idx in parsed_data) {
         data = parsed_data[idx];
         len  = data && data.length;
 
         if (data && data.constructor === Array) {
             for (i = 0; i < len; i++) {
+                ops_begun++;
                 (function(eye, idx, data) {
                 client.hget('localityFinderCities', data[eye].name, function(err, res) {
-                    //console.log('hget localityFinderCities err', err);
-                    //console.log('hget localityFinderCities res', res);
                     if (!err && res === null) {
 
                         // Create a hash for the city name
-                        console.log('boo', data[eye].name);
                         if (data && data[eye] && data[eye].name) {
                             client.hset('localityFinderCities', data[eye].name, Math.round((+new Date) / 1000), function(err, res) {
                                 if (!err) {
-                                    console.log('Caching %s', data[eye].name);
+                                    debug && console.log('Caching %s %d/%d', data[eye].name, ops_begun, ops_done);
                                 }
                             });
 
                             // Add city data to a list
-                            client.rpush(
-                                [KEY_PREFIX, KEY_DELIMITER, idx].join(''), 
-                                JSON.stringify(data[eye])
-                            );
+                            client.rpush([KEY_PREFIX, KEY_DELIMITER, idx].join(''), JSON.stringify(data[eye]), function(err, res) {
+                                debug && console.log('Cached %s %d/%d', data[eye].name, ops_begun, ops_done);
+                                ops_done++;
+                                // Close redis connection
+                                if (ops_begun === ops_done) { 
+                                    end_ts = +new Date;
+                                    console.log('Cached %d cities in %dms', ops_done, (end_ts - start_ts));
+                                    client.end(); 
+                                }
+                            });
                         }
                     } else {
                         if (data && data[eye] && data[eye].name) {
-                            console.log("Already cached %s", data[eye].name);
+                            ops_done++;
+                            // Close redis connection
+                            if (ops_begun === ops_done) { 
+                                end_ts = +new Date;
+                                console.log('Pulled %d cached cities in %dms', ops_done, (end_ts - start_ts));
+                                client.end(); 
+                            } 
+                            debug && console.log("Already cached %s %d/%d", data[eye].name, ops_begun, ops_done);
                         }
                     }
+
+                    
                 });
                 })(i, idx, data);
             }
         }
     }
-    
-    // Close redis connection
-    setTimeout( function() { client.end(); }, 3000);
 });
