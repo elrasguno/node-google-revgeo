@@ -14,7 +14,7 @@ var localityFinder = (function () {
      *
      * @access public
      */
-    var getLocalityInfo = function(latlng) {
+    var getLocalityInfo = function(latlng, cb) {
         var lng     = latlng.pop(),
             lat     = latlng.pop(),
             dataIdx = Math.floor(lat),
@@ -30,8 +30,10 @@ var localityFinder = (function () {
                          && isBetweenCoords(lng, parsed.bounds.lng) ) {
                         client.end();
                         end_ts = +new Date;
-                        console.log("You are in %s (%dms) ", parsed.name, (end_ts - start_ts));
-
+                        //console.log("You are in %s (%dms) ", parsed.name, (end_ts - start_ts));
+                        parsed.src = 'cache';
+                        parsed.timing = (end_ts - start_ts) + 'ms';
+                        cb && cb(parsed);
                         return parsed;
                     }
                 }
@@ -40,16 +42,19 @@ var localityFinder = (function () {
             var info     = getLocalityDataFromGoogle([lat,lng], function(info) {
                 now      = +new Date,
                 inBounds = isWithinBounds([lat,lng], info);
-                console.log("data from google (%dms)", (now - start_ts), info.name);
+                // console.log("data from google (%dms)", (now - start_ts), info.name);
                 // Validate that input data falls within info bounds
                 // Add data to queue for consumer to pick up
                 // info && inBounds && localityFinder.cacheData(info);
 
                 client.end();
+                info.src = 'google';
+                info.timing = (now - start_ts) + 'ms';
+                cb && cb(info);
+                return info;
             });
         });
-        
-        return false;
+        //return false;
     };
 
     /**
@@ -180,7 +185,6 @@ var localityFinder = (function () {
             result = '',
             cacheInfo = null;
         var url = "http://maps.googleapis.com/maps/api/geocode/json?latlng=" + lat + "," + lng + "&sensor=false";
-        console.log('url', url);
 
         http.get(url, function(res) {
             res.setEncoding('utf8');
@@ -213,7 +217,8 @@ var localityFinder = (function () {
                 }
             });
         }).on('error', function(e) {
-            console.log("Got error: " + e.message);
+            console.log("Couldn't reach google: " + e.message);
+            client.end();
         });
     }
 
@@ -236,10 +241,11 @@ var redis    = require('redis')
 
 // Setup redis client
 client.on('error', function (err) {
-        console.log(err);
+    console.log('wtf', err);
+    client.end();
 });
 
-client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
+//client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
 client.select(3);
 
 var latlng, lng, lat, locality, now;
@@ -256,60 +262,12 @@ if (process.argv.length > 2) {
     lng = latlng.pop();
     lat = latlng.pop();
     
-    locality = localityFinder.getLocalityInfo([lat,lng]);
+    locality = localityFinder.getLocalityInfo([lat,lng], function(results) {
+        //console.log('results (%s)', typeof results, results);
+        console.log(JSON.stringify(results));
+    });
 
     // TODO: update getLocalityInfo
     // 1) Return results from google on cache miss
     // 2) Push results to queue for consumer to pick up and cache
 }
-
-//fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
-//    var got_data_ts = +new Date,
-//        got_data_in = (got_data_ts - start_ts),
-//        parsed_data;
-//
-//    try {
-//        parsed_data = JSON.parse(data);
-//    } catch (e) {
-//        console.log("bad data, bad");
-//        console.log(e);
-//        return;
-//    }
-//
-//    localityFinder.setLocalityData(parsed_data);
-//
-//    var latlng, lng, lat, locality, now;
-//    if (process.argv.length > 2) {
-//        switch (process.argv.length) {
-//            case 3:
-//                latlng = process.argv.pop().split(' ');
-//                break;
-//            case 4:
-//                latlng = process.argv;
-//                break;
-//        }
-//
-//        lng = latlng.pop();
-//        lat = latlng.pop();
-//        
-//        locality = localityFinder.getLocalityInfo([lat,lng]);
-//        if (locality) {
-//            now = +new Date;
-//            console.log("data from cache (%dms)", (now - got_data_ts), locality);
-//
-//            // Close redis connection
-//            client.end();
-//        } else {
-//            var info     = localityFinder.getLocalityDataFromGoogle([lat,lng], function(info) {
-//                now      = +new Date,
-//                inBounds = localityFinder.isWithinBounds([lat,lng], info);
-//                console.log("data from google (%dms)", (now - got_data_ts), info.name);
-//                // Validate that input data falls within info bounds
-//                info && inBounds && localityFinder.cacheData(info);
-//
-//                // Close redis connection
-//                client.end();
-//            });
-//        }
-//    }
-//});
