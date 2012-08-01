@@ -36,8 +36,19 @@ var localityFinder = (function () {
                     }
                 }
             }
-        });
 
+            var info     = getLocalityDataFromGoogle([lat,lng], function(info) {
+                now      = +new Date,
+                inBounds = isWithinBounds([lat,lng], info);
+                console.log("data from google (%dms)", (now - start_ts), info.name);
+                // Validate that input data falls within info bounds
+                // Add data to queue for consumer to pick up
+                // info && inBounds && localityFinder.cacheData(info);
+
+                client.end();
+            });
+        });
+        
         return false;
     };
 
@@ -229,7 +240,7 @@ client.on('error', function (err) {
 });
 
 client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
-client.select(2);
+client.select(3);
 
 var latlng, lng, lat, locality, now;
 if (process.argv.length > 2) {
@@ -246,6 +257,10 @@ if (process.argv.length > 2) {
     lat = latlng.pop();
     
     locality = localityFinder.getLocalityInfo([lat,lng]);
+
+    // TODO: update getLocalityInfo
+    // 1) Return results from google on cache miss
+    // 2) Push results to queue for consumer to pick up and cache
 }
 
 //fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
