@@ -1,7 +1,9 @@
 var localityFinder = (function () {   
 
-    var __self__      = this;
-    this.localityData = {};
+    var __self__       = this;
+    this.localityData  = {};
+    this.KEY_PREFIX    = 'LFDATA',
+    this.KEY_DELIMITER = '#_#';
 
     var setLocalityData = function(data) {
         this.localityData = data;
@@ -16,17 +18,25 @@ var localityFinder = (function () {
         var lng     = latlng.pop(),
             lat     = latlng.pop(),
             dataIdx = Math.floor(lat),
-            data    = this.localityData[dataIdx],
-            len     = data && this.localityData[dataIdx].length,
-            result, i;
+            rKey    = [this.KEY_PREFIX, this.KEY_DELIMITER, dataIdx].join(''),
+            start_ts = +new Date,
+            data, len, i, parsed, end_ts;
+        
+        data = client.lrange(rKey, 0, -1, function(err, res) {
+            if (res && (len = res.length)) {
+                for (i = 0; i < len; i++) {
+                    parsed = JSON.parse(res[i]);
+                    if ( isBetweenCoords(lat, parsed.bounds.lat) 
+                         && isBetweenCoords(lng, parsed.bounds.lng) ) {
+                        client.end();
+                        end_ts = +new Date;
+                        console.log("You are in %s (%dms) ", parsed.name, (end_ts - start_ts));
 
-        for (i = 0; i < len; i++) {
-            if ( isBetweenCoords(lat, data[i].bounds.lat) 
-                 && isBetweenCoords(lng, data[i].bounds.lng) ) {
-                //console.log("You are in " + data[i].name);
-                return data[i];
+                        return parsed;
+                    }
+                }
             }
-        }
+        });
 
         return false;
     };
@@ -219,54 +229,72 @@ client.on('error', function (err) {
 });
 
 client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
+client.select(2);
 
-fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
-    var got_data_ts = +new Date,
-        got_data_in = (got_data_ts - start_ts),
-        parsed_data;
-
-    try {
-        parsed_data = JSON.parse(data);
-    } catch (e) {
-        console.log("bad data, bad");
-        console.log(e);
-        return;
+var latlng, lng, lat, locality, now;
+if (process.argv.length > 2) {
+    switch (process.argv.length) {
+        case 3:
+            latlng = process.argv.pop().split(' ');
+            break;
+        case 4:
+            latlng = process.argv;
+            break;
     }
 
-    localityFinder.setLocalityData(parsed_data);
+    lng = latlng.pop();
+    lat = latlng.pop();
+    
+    locality = localityFinder.getLocalityInfo([lat,lng]);
+}
 
-    var latlng, lng, lat, locality, now;
-    if (process.argv.length > 2) {
-        switch (process.argv.length) {
-            case 3:
-                latlng = process.argv.pop().split(' ');
-                break;
-            case 4:
-                latlng = process.argv;
-                break;
-        }
-
-        lng = latlng.pop();
-        lat = latlng.pop();
-        
-        locality = localityFinder.getLocalityInfo([lat,lng]);
-        if (locality) {
-            now = +new Date;
-            console.log("data from cache (%dms)", (now - got_data_ts), locality);
-
-            // Close redis connection
-            client.end();
-        } else {
-            var info     = localityFinder.getLocalityDataFromGoogle([lat,lng], function(info) {
-                now      = +new Date,
-                inBounds = localityFinder.isWithinBounds([lat,lng], info);
-                console.log("data from google (%dms)", (now - got_data_ts), info.name);
-                // Validate that input data falls within info bounds
-                info && inBounds && localityFinder.cacheData(info);
-
-                // Close redis connection
-                client.end();
-            });
-        }
-    }
-});
+//fs.readFile('./revgeo_data.json', 'utf8', function (err, data) {
+//    var got_data_ts = +new Date,
+//        got_data_in = (got_data_ts - start_ts),
+//        parsed_data;
+//
+//    try {
+//        parsed_data = JSON.parse(data);
+//    } catch (e) {
+//        console.log("bad data, bad");
+//        console.log(e);
+//        return;
+//    }
+//
+//    localityFinder.setLocalityData(parsed_data);
+//
+//    var latlng, lng, lat, locality, now;
+//    if (process.argv.length > 2) {
+//        switch (process.argv.length) {
+//            case 3:
+//                latlng = process.argv.pop().split(' ');
+//                break;
+//            case 4:
+//                latlng = process.argv;
+//                break;
+//        }
+//
+//        lng = latlng.pop();
+//        lat = latlng.pop();
+//        
+//        locality = localityFinder.getLocalityInfo([lat,lng]);
+//        if (locality) {
+//            now = +new Date;
+//            console.log("data from cache (%dms)", (now - got_data_ts), locality);
+//
+//            // Close redis connection
+//            client.end();
+//        } else {
+//            var info     = localityFinder.getLocalityDataFromGoogle([lat,lng], function(info) {
+//                now      = +new Date,
+//                inBounds = localityFinder.isWithinBounds([lat,lng], info);
+//                console.log("data from google (%dms)", (now - got_data_ts), info.name);
+//                // Validate that input data falls within info bounds
+//                info && inBounds && localityFinder.cacheData(info);
+//
+//                // Close redis connection
+//                client.end();
+//            });
+//        }
+//    }
+//});
