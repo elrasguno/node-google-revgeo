@@ -1,13 +1,8 @@
 var localityFinder = (function () {   
 
     var __self__       = this;
-    this.localityData  = {};
     this.KEY_PREFIX    = 'LFDATA',
     this.KEY_DELIMITER = '#_#';
-
-    var setLocalityData = function(data) {
-        this.localityData = data;
-    }
 
     /**
      * getLocalityInfo
@@ -26,15 +21,14 @@ var localityFinder = (function () {
             if (res && (len = res.length)) {
                 for (i = 0; i < len; i++) {
                     parsed = JSON.parse(res[i]);
-                    if ( isBetweenCoords(lat, parsed.bounds.lat) 
-                         && isBetweenCoords(lng, parsed.bounds.lng) ) {
+                    if ( isWithinBounds([lat,lng], parsed) ) {
                         client.end();
                         end_ts = +new Date;
-                        //console.log("You are in %s (%dms) ", parsed.name, (end_ts - start_ts));
+
                         parsed.src = 'cache';
                         parsed.timing = (end_ts - start_ts) + 'ms';
                         cb && cb(parsed);
-                        return parsed;
+                        return true;
                     }
                 }
             }
@@ -42,19 +36,16 @@ var localityFinder = (function () {
             var info     = getLocalityDataFromGoogle([lat,lng], function(info) {
                 now      = +new Date,
                 inBounds = isWithinBounds([lat,lng], info);
-                // console.log("data from google (%dms)", (now - start_ts), info.name);
                 // Validate that input data falls within info bounds
                 // Add data to queue for consumer to pick up
-                // info && inBounds && localityFinder.cacheData(info);
+                info && inBounds && queueDataForProcessing(info);
 
-                client.end();
                 info.src = 'google';
                 info.timing = (now - start_ts) + 'ms';
                 cb && cb(info);
-                return info;
+                return true;
             });
         });
-        //return false;
     };
 
     /**
@@ -129,54 +120,23 @@ var localityFinder = (function () {
     };
 
     /**
-     * cacheData
+     * queueDataForProcessing
      *
-     * Cache off data into this.localityData
+     * Cache off data into redis queue
      *
      * @access private
      */
-    var cacheData = function(cacheInfo) {
-        var lat1     = Math.floor(cacheInfo.bounds.lat[0]),
-            lat2     = Math.floor(cacheInfo.bounds.lat[1]),
-            dataIdx  = (function() {
-                            var min = Math.min.apply(null, [lat1, lat2]),
-                                max = Math.max.apply(null, [lat1, lat2]),
-                                result = [], i;
-                            for (i = min; i <= max; i++) { result.push(i); }
-                            return result;
-                        })(),
-            cacheObj = this.localityData,
-            cachedData,
-            result, i;
-
-        // Given that the floored values of the bounds of an area
-        // can be different, store data in a range from min to max.
-        for (i = 0; i < dataIdx.length; i++) {
-            if (!cacheObj[dataIdx[i]]) {
-                cacheObj[dataIdx[i]] = [];
+    var queueDataForProcessing = function(cacheInfo) {
+        console.log('cacheInfo (%s)', typeof cacheInfo, cacheInfo);
+        
+        // Check to make sure city hasn't made it into cached data already
+        client.hget('localityFinderCities', cacheInfo.name, function(err, res) {
+            if (!err && res === null) {
+                client.rpush([KEY_PREFIX, KEY_DELIMITER, 'consumerQueue'].join(''), JSON.stringify(cacheInfo), function(err, res) {
+                    client.end();
+                });
             }
-            cacheObj[dataIdx[i]].push(cacheInfo);    
-        }
-
-        // TODO: prevent duplicates.
-        // Read existing file
-        //if (cachedData = fs.readFileSync('./revgeo_data.json', 'utf8')) {
-        //    console.log('CACHED_DATA', cachedData);
-        //    cachedData = JSON.parse(cachedData);
-        //}
-        //return;
-
-        // Get file descriptor
-        var data    = JSON.stringify(cacheObj),
-            mbCount = encodeURIComponent(data).match(/%[89ABab]/g),
-            mbLen   = (mbCount ? mbCount.length : 0),
-            len     = (data.length + mbLen),
-            fd      = fs.openSync('./revgeo_data.json', 'w+');
-
-        // Write back updated data
-        console.log('writing %d bytes to revgeo_data.json', len);
-        fd && fs.writeSync(fd, data, 0, len, null);
-        fs.closeSync(fd);
+        });
     };
 
     var getLocalityDataFromGoogle = function(latlng, cb) {
@@ -223,12 +183,7 @@ var localityFinder = (function () {
     }
 
     return {
-        isWithinBounds : function () { return isWithinBounds.apply(__self__, arguments) },
-        getLocalityInfo : function () { return getLocalityInfo.apply(__self__, arguments) },
-        getLocalityDataFromGoogle : function () { return getLocalityDataFromGoogle.apply(__self__, arguments) },
-        setLocalityData : function () { return setLocalityData.apply(__self__, arguments) },
-        parseGoogleData : function () { return parseGoogleData.apply(__self__, arguments) },
-        cacheData       : function () { return cacheData.apply(__self__, arguments) }
+        getLocalityInfo : function () { return getLocalityInfo.apply(__self__, arguments) }
     }
 
 })();
@@ -241,7 +196,7 @@ var redis    = require('redis')
 
 // Setup redis client
 client.on('error', function (err) {
-    console.log('wtf', err);
+    console.log('redis error', err);
     client.end();
 });
 
@@ -263,7 +218,6 @@ if (process.argv.length > 2) {
     lat = latlng.pop();
     
     locality = localityFinder.getLocalityInfo([lat,lng], function(results) {
-        //console.log('results (%s)', typeof results, results);
         console.log(JSON.stringify(results));
     });
 
