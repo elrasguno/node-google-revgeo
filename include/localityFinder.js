@@ -1,6 +1,10 @@
-var localityFinder = (function () {   
+var redis    = require('redis')
+  , client   = redis.createClient()
+  , http     = require('http')
+  , start_ts = +new Date
+  , localityFinder = (function () {
 
-    var __self__       = this;
+    var __self       = this;
     this.KEY_PREFIX    = 'LFDATA',
     this.KEY_DELIMITER = '#_#';
 
@@ -164,13 +168,7 @@ var localityFinder = (function () {
 
                     cacheInfo = (parseGoogleData(results) || parseGoogleData(results, 'administrative_area_level_2'));
                     if (cb && cacheInfo) {
-                        cb && cacheInfo && cb(cacheInfo);
-
-                        // Write back updated data
-                        cityName = (cacheInfo.name.split(', ').join('_').toLowerCase() || 'tmp');
-                        fd = fs.openSync('./data.' + cityName + '.json', 'w+');
-                        fd && fs.writeSync(fd, data, 0, len, null);
-                        fs.closeSync(fd);
+                        cb(cacheInfo);
                     } else {
                         console.log(JSON.stringify({success: false, error: "Couldn't determine locality from google data", result: results}));
                         client.end();
@@ -187,18 +185,12 @@ var localityFinder = (function () {
     }
 
     return {
-        getLocalityInfo : function () { return getLocalityInfo.apply(__self__, arguments) }
+        getLocalityInfo : function () { return getLocalityInfo.apply(__self, arguments) }
+      , endClient : function() { client.end(); }
     }
 
 })();
 
-var redis    = require('redis')
-  , client   = redis.createClient()
-  , fs       = require('fs')
-  , http     = require('http')
-  , start_ts = +new Date;
-
-// Setup redis client
 client.on('error', function (err) {
     console.log('redis error', err);
     client.end();
@@ -207,25 +199,5 @@ client.on('error', function (err) {
 //client.auth('bb92cba4fb580e1fa2c2ca8168aa302f887a8ff9');
 client.select(3);
 
-var latlng, lng, lat, locality, now;
-if (process.argv.length > 2) {
-    switch (process.argv.length) {
-        case 3:
-            latlng = process.argv.pop().split(' ');
-            break;
-        case 4:
-            latlng = process.argv;
-            break;
-    }
+exports.localityFinder = localityFinder;
 
-    lng = latlng.pop();
-    lat = latlng.pop();
-    
-    locality = localityFinder.getLocalityInfo([lat,lng], function(results) {
-        console.log(JSON.stringify(results));
-    });
-
-    // TODO: update getLocalityInfo
-    // 1) Return results from google on cache miss
-    // 2) Push results to queue for consumer to pick up and cache
-}
