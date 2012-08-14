@@ -152,9 +152,8 @@ var localityFinder = (function () {
                 result += chunk;
             });
             res.on('end', function(e) {
-                var data    = JSON.parse(result),
-                    results = data.results;
-                
+                var parsed  = JSON.parse(result),
+                    results = parsed.results;
                 if (results && results.length) {
                     // Cache data from google temporarily for debugging
                     var data    = JSON.stringify(results),
@@ -162,7 +161,6 @@ var localityFinder = (function () {
                         mbLen   = (mbCount ? mbCount.length : 0),
                         len     = (data.length + mbLen),
                         fd, cityName;
-
 
                     cacheInfo = (parseGoogleData(results) || parseGoogleData(results, 'administrative_area_level_2'));
                     if (cb && cacheInfo) {
@@ -173,7 +171,13 @@ var localityFinder = (function () {
                         fd = fs.openSync('./data.' + cityName + '.json', 'w+');
                         fd && fs.writeSync(fd, data, 0, len, null);
                         fs.closeSync(fd);
+                    } else {
+                        console.log(JSON.stringify({success: false, error: "Couldn't determine locality from google data", result: results}));
+                        client.end();
                     }
+                } else {
+                    console.log(JSON.stringify({success: false, error: 'No data from google', result: parsed}));
+                    client.end();
                 }
             });
         }).on('error', function(e) {
